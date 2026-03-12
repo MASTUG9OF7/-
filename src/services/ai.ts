@@ -30,7 +30,7 @@ export async function generateStoryOutline(
   protagonistGender: 'male' | 'female',
   customApiKey?: string
 ): Promise<StoryOutline> {
-  const ai = new GoogleGenAI({ apiKey: customApiKey || process.env.GEMINI_API_KEY || "" });
+  const ai = new GoogleGenAI({ apiKey: customApiKey || import.meta.env.VITE_GEMINI_API_KEY || "" });
   
   const genderText = protagonistGender === 'female' ? '女性' : '男性';
   const prompt = `基于模型 ${model === 'A' ? 'A（觉醒复仇）' : 'B（身份错位）'} 和导火索事件“${trigger}”，创作一个详细的三幕式爽文大纲。
@@ -99,7 +99,7 @@ export async function* generateActSegmentStream(
   previousContext: string = "",
   customApiKey?: string
 ): AsyncGenerator<string> {
-  const ai = new GoogleGenAI({ apiKey: customApiKey || process.env.GEMINI_API_KEY || "" });
+  const ai = new GoogleGenAI({ apiKey: customApiKey || import.meta.env.VITE_GEMINI_API_KEY || "" });
   
   const genderText = protagonistGender === 'female' ? '女性' : '男性';
   const stylePrompts: Record<LanguageStyle, string> = {
@@ -150,7 +150,7 @@ export async function generateTriggers(
   protagonistGender: 'male' | 'female',
   customApiKey?: string
 ): Promise<string[]> {
-  const ai = new GoogleGenAI({ apiKey: customApiKey || process.env.GEMINI_API_KEY || "" });
+  const ai = new GoogleGenAI({ apiKey: customApiKey || import.meta.env.VITE_GEMINI_API_KEY || "" });
   
   const genderText = protagonistGender === 'female' ? '女性' : '男性';
   const prompt = `请为中老年向网络爽文生成4个新的“导火索事件”。

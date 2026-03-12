@@ -40,7 +40,7 @@ export async function generateStoryOutline(
   每一幕都需要提供极其详尽的情节走向，以便后续能扩展成数千字的文字。`;
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash-lite",
+    model: "gemini-flash-lite-latest",
     contents: prompt,
     config: {
       systemInstruction: SYSTEM_INSTRUCTION,
@@ -132,7 +132,7 @@ export async function* generateActSegmentStream(
   7. 如果是该幕的最后一段，请做好向下一幕的过渡。`;
 
   const response = await ai.models.generateContentStream({
-    model: "gemini-2.0-flash-lite",
+    model: gemini-flash-lite-latest",
     contents: prompt,
     config: {
       systemInstruction: "你是一位顶级网络爽文作家，擅长创作让中老年女性读者欲罢不能的世情爽文。你的文字充满情感张力，节奏紧凑，爽点密集。",
@@ -164,7 +164,7 @@ export async function generateTriggers(
   4. 必须返回JSON数组格式，例如：["事件1", "事件2", "事件3", "事件4"]`;
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash-lite",
+    model: "gemini-flash-lite-latest",
     contents: prompt,
     config: {
       responseMimeType: "application/json",

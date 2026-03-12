@@ -132,7 +132,7 @@ export async function* generateActSegmentStream(
   7. 如果是该幕的最后一段，请做好向下一幕的过渡。`;
 
   const response = await ai.models.generateContentStream({
-    model: gemini-flash-lite-latest",
+    model: "gemini-flash-lite-latest",
     contents: prompt,
     config: {
       systemInstruction: "你是一位顶级网络爽文作家，擅长创作让中老年女性读者欲罢不能的世情爽文。你的文字充满情感张力，节奏紧凑，爽点密集。",

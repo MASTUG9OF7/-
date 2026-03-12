@@ -102,7 +102,25 @@ export default function App() {
   const handleStartGeneration = async () => {
     if (!state.model || !state.triggerEvent) return;
 
+    // --- 新增：每人每天限用两次逻辑 ---
+    const today = new Date().toLocaleDateString(); // 获取当前日期
+    const usageData = JSON.parse(localStorage.getItem('daily_usage_limit') || '{}');
+
+    // 如果日期变了，重置计数
+    if (usageData.date !== today) {
+      usageData.date = today;
+      usageData.count = 0;
+    }
+
+    // 检查次数：如果没有自定义 API Key 且次数超过 2 次，则拦截
+    if (!customApiKey && usageData.count >= 2) {
+      alert("为了节省开发者配额，免费模式下每人每天限用 2 次。您可以点击右上角设置图标，填入自己的 API Key 来解锁无限次使用！");
+      return;
+    }
+    // --- 限流逻辑结束 ---
+
     setState(prev => ({ ...prev, isGenerating: true, error: null, outline: null, fullStory: null }));
+
     try {
       const outline = await generateStoryOutline(
         state.model, 
@@ -111,6 +129,11 @@ export default function App() {
         state.protagonistGender,
         customApiKey
       );
+      
+      // 生成成功后，更新本地计数
+      usageData.count += 1;
+      localStorage.setItem('daily_usage_limit', JSON.stringify(usageData));
+
       setState(prev => ({ ...prev, outline, isGenerating: false }));
       setEditedOutline(outline);
     } catch (err) {
@@ -121,7 +144,7 @@ export default function App() {
       }));
     }
   };
-
+  
   const handleGenerateStory = async () => {
     const outlineToUse = editedOutline || state.outline;
     if (!outlineToUse) return;

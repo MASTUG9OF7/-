@@ -57,6 +57,8 @@ export default function App() {
     model: null,
     languageStyle: 'colloquial',
     triggerEvent: '',
+    protagonistName: '王大妈',
+    protagonistGender: 'female',
     isGenerating: false,
     isGeneratingStory: false,
     currentGeneratingStep: null,
@@ -88,7 +90,7 @@ export default function App() {
     if (!state.model) return;
     setIsRefreshingTriggers(true);
     try {
-      const newTriggers = await generateTriggers(state.model, customApiKey);
+      const newTriggers = await generateTriggers(state.model, state.protagonistGender, customApiKey);
       setCurrentTriggers(newTriggers);
     } catch (err) {
       console.error("Failed to refresh triggers", err);
@@ -102,7 +104,13 @@ export default function App() {
 
     setState(prev => ({ ...prev, isGenerating: true, error: null, outline: null, fullStory: null }));
     try {
-      const outline = await generateStoryOutline(state.model, state.triggerEvent, customApiKey);
+      const outline = await generateStoryOutline(
+        state.model, 
+        state.triggerEvent, 
+        state.protagonistName,
+        state.protagonistGender,
+        customApiKey
+      );
       setState(prev => ({ ...prev, outline, isGenerating: false }));
       setEditedOutline(outline);
     } catch (err) {
@@ -129,7 +137,7 @@ export default function App() {
 
     let accumulatedStory = "";
     const acts: (1 | 2 | 3)[] = [1, 2, 3];
-    const segmentsPerAct = [3, 4, 3]; // Total 10 segments
+    const segmentsPerAct = [1, 3, 1]; // Total 5 segments, ~5000 words
 
     try {
       for (let i = 0; i < acts.length; i++) {
@@ -149,6 +157,8 @@ export default function App() {
             s,
             segmentsCount,
             state.languageStyle,
+            state.protagonistName,
+            state.protagonistGender,
             context,
             customApiKey
           );
@@ -210,6 +220,8 @@ export default function App() {
       model: null,
       languageStyle: 'colloquial',
       triggerEvent: '',
+      protagonistName: '王大妈',
+      protagonistGender: 'female',
       isGenerating: false,
       isGeneratingStory: false,
       currentGeneratingStep: null,
@@ -231,7 +243,7 @@ export default function App() {
               <Sparkles className="text-white w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-[#2C241E]">银发爽文生成器</h1>
+              <h1 className="text-2xl font-bold tracking-tight text-[#2C241E]">银发短篇网文生成器</h1>
               <p className="text-xs text-[#8B7E74] font-medium uppercase tracking-widest">Silver Hair Story Engine v1.0</p>
             </div>
           </div>
@@ -319,6 +331,51 @@ export default function App() {
               exit={{ opacity: 0, scale: 0.95 }}
               className="space-y-12"
             >
+              {/* Step 0: Protagonist Settings */}
+              <section>
+                <div className="flex items-center gap-2 mb-6">
+                  <div className="w-8 h-8 rounded-full bg-[#2C241E] text-white flex items-center justify-center text-sm font-bold">0</div>
+                  <h2 className="text-xl font-bold">主角设定</h2>
+                </div>
+                <div className="bg-white p-6 rounded-2xl border-2 border-[#EEDDCC] shadow-sm flex flex-col md:flex-row gap-6">
+                  <div className="flex-1 space-y-2">
+                    <label className="text-sm font-bold text-[#8B7E74] uppercase tracking-wider">主角姓名</label>
+                    <input 
+                      type="text"
+                      value={state.protagonistName}
+                      onChange={(e) => setState(prev => ({ ...prev, protagonistName: e.target.value }))}
+                      placeholder="例如：王大妈、老李头"
+                      className="w-full px-4 py-3 rounded-xl border-2 border-[#EEDDCC] focus:border-[#E67E22] outline-none transition-all"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-[#8B7E74] uppercase tracking-wider">主角性别</label>
+                    <div className="flex bg-[#FDF8F3] p-1 rounded-xl border-2 border-[#EEDDCC]">
+                      <button
+                        onClick={() => setState(prev => ({ ...prev, protagonistGender: 'female' }))}
+                        className={`px-6 py-2 rounded-lg font-bold transition-all ${
+                          state.protagonistGender === 'female' 
+                            ? 'bg-white text-[#E67E22] shadow-sm' 
+                            : 'text-[#8B7E74] hover:text-[#4A3F35]'
+                        }`}
+                      >
+                        女性
+                      </button>
+                      <button
+                        onClick={() => setState(prev => ({ ...prev, protagonistGender: 'male' }))}
+                        className={`px-6 py-2 rounded-lg font-bold transition-all ${
+                          state.protagonistGender === 'male' 
+                            ? 'bg-white text-[#E67E22] shadow-sm' 
+                            : 'text-[#8B7E74] hover:text-[#4A3F35]'
+                        }`}
+                      >
+                        男性
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
               {/* Step 1: Choose Model */}
               <section>
                 <div className="flex items-center gap-2 mb-6">
@@ -550,7 +607,7 @@ export default function App() {
                   ) : (
                     <h2 className="text-4xl font-black text-[#2C241E] mb-2 leading-tight">《{state.outline?.title}》</h2>
                   )}
-                  <p className="text-[#8B7E74] font-medium italic">—— 一部让千万中老年女性热血沸腾的爽文神作</p>
+                  <p className="text-[#8B7E74] font-medium italic">—— 一部让千万中老年读者热血沸腾的网文神作</p>
                 </div>
               </div>
 

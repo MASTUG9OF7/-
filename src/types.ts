@@ -20,6 +20,8 @@ export interface GenerationState {
   model: NarrativeModel | null;
   languageStyle: LanguageStyle;
   triggerEvent: string;
+  protagonistName: string;
+  protagonistGender: 'male' | 'female';
   isGenerating: boolean;
   isGeneratingStory: boolean;
   currentGeneratingStep: string | null; // e.g., "第一幕 (1/3)"
